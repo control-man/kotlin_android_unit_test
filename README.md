@@ -1,14 +1,21 @@
 # kotlin_android_unit_test
 
+
 코루틴 테스트 공식문서 (runblocking 와 runblockingTest의 차이점)
 https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-test/
+
 
 코루틴 테스팅 Android Dev 영상
 https://www.youtube.com/watch?v=KMb0Fs8rCRs&feature=youtu.be
 
+
+mockk
+https://github.com/mockk/mockk
+
+
 runblockingTest
 1. Creates a new coroutine
-2. Allows us to execute suspend functions immedaiately
+2. Allows us to execute suspend functions immedaiately (실제로 delay하지 않고 실행할 수 있다.)
 
 Difference with runblocking?
 runblockingTest skips delays
@@ -27,7 +34,7 @@ https://eso0609.tistory.com/82
 4.coroutineScope 자체가 async/await 이걸 잘생각해야한다. 스레드를 점유하지않고 또다른 일을 할 수있긴함
 
 
-coroutineScope 의 async / await동작을 보여주는 예제
+coroutineScope 의 async / await동작을 보여주는
 https://stackoverflow.com/questions/53535977/coroutines-runblocking-vs-coroutinescope
 
 코루틴에 관한 좋은글 및 SupervisorJob에 대한 설명, coroutineScope {...} 에대한 설명

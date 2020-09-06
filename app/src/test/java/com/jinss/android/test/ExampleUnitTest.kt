@@ -24,7 +24,7 @@ class ExampleUnitTest {
     @Test
     fun `Should do my test`() = runBlocking {
         val accountManager = AccountManager()
-        accountManager.updateProfile()
+        accountManager.updateProfile(5000)
         println("Done should do my test")
     }
 
@@ -270,6 +270,21 @@ class ExampleUnitTest {
             println("hello")  // 1
         }
         job?.join()
+        println("done")
+    }
+
+    // 디스채펴만 같다고 해서 같은 코루틴스코프로 잡히게 될까???
+    // 같이 종료가 가능할까??? -> 아니다....ㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎ~~~~
+    val myCoroutineContext2 = SupervisorJob() + Dispatchers.IO
+    @Test
+    fun `My coroutine study test7`() = runBlocking(myCoroutineContext2) {
+        launch {
+            println("hello")  // 1
+            CoroutineScope(myCoroutineContext2).launch {
+                delay(5000)
+                println("world")
+            }
+        }
         println("done")
     }
 }
