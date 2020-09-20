@@ -380,7 +380,8 @@ class ExampleUnitTest {
 
 
     // coroutineScope대신 runblocking을 쓰게되면 다른 쓰레드를 block 하기때문에
-    // 그 코루틴과 같은 스코프의 자식들이 전부끝나야 실행이된다.
+    // 그 코루틴과 같은 스코프의 자식들이 전부끝나야 그다음 statement가 실행이된다.
+    // 아래예제는 순서가 보장되는 코루틴이됨.
     @Test
     fun `My coroutine study test12`() = runBlocking {
         val myCoroutineScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
