@@ -287,4 +287,121 @@ class ExampleUnitTest {
         }
         println("done")
     }
+
+    // runBlocking이 자식들을 전부 기다려주니깐 실행가능
+    @Test
+    fun `My coroutine study test8`() = runBlocking {
+        launch {
+            println("hello")  // 2
+            launch {
+                println("world") // 3
+                launch {
+                    println("how are you") // 4
+                }
+            }
+        }
+        println("done") // 1
+    }
+
+    // runBlocking 이든 coroutineScope든 자식들을 전부 기다려주긴하지만, 다른자식이면 못기다림.
+    // runBlocking안에서 또다른 CoroutineScope이 생성되었지만 그놈은 기다려줄수가없다.
+    @Test
+    fun `My coroutine study test9`() = runBlocking {
+        val myCoroutineScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
+        myCoroutineScope.launch {
+            println("hello")  // 2
+            launch {
+                println("world") // 실행안됨
+                launch {
+                    println("how are you") // 실행안됨
+                }
+            }
+        }
+        println("done") // 1
+    }
+
+    // 다만 myCoroutineScope 안에서 실행된 자식들은 부모가 전부 기다려주긴하는데, 그래서 자식코루틴을 컨트롤할수있긴함.
+    // 현재 스레드를 blocking 시키진않으므로 다른 스레드도 실행할 기회를 얻어서 실행된다.
+    @Test
+    fun `My coroutine study test10`() = runBlocking {
+        val myCoroutineScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
+        myCoroutineScope.launch {
+            println("hello")  // 1
+            launch {
+                println("world") // 2
+                launch {
+                    println("how are you") // 4 순서보장이되진않음
+                }
+            }
+        }
+        myCoroutineScope.launch {
+            println("hello2~~~~~~~~") // 3
+            launch {
+                println("hello2~~~222222") //6 순서보장이 되진않네 ㅎㅎ
+            }
+        }
+        myCoroutineScope.launch {
+            println("hello3~~~~~~~~") // 5
+        }
+        delay(5000) // 딜레이를줘서 myCoroutineScope 안에놈들이 실행되는거 수동으로 기다리게끔함.
+        println("done") // 4
+    }
+
+    @Test
+    fun `My coroutine study test11`() = runBlocking {
+        val myCoroutineScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
+        myCoroutineScope.launch {
+            println("hello")  // 1
+            launch {
+                println("world") // 2
+                launch {
+                    println("how are you") // 4 순서보장이되진않음 ㅎㅎ
+                }
+            }
+        }
+        myCoroutineScope.async {
+            println("hello2~~~~~~~~") // 3
+            launch {
+                    println("hello2~~~222222") // 6
+                launch {
+                    println("hello2~~~333333") // 7
+                }
+            }
+            launch {
+                println("hello2~~~~~4") // 5
+            }
+        }.await() //여기까진 기다려줌!! join이나 다름없으니깐 그런듯.
+
+        myCoroutineScope.launch {
+            println("hello3~~~~~~~~") // 9 순서보장이되는건아님
+        }
+        println("done") // 8
+    }
+
+
+    // coroutineScope대신 runblocking을 쓰게되면 다른 쓰레드를 block 하기때문에
+    // 그 코루틴과 같은 스코프의 자식들이 전부끝나야 실행이된다.
+    @Test
+    fun `My coroutine study test12`() = runBlocking {
+        val myCoroutineScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
+        runBlocking {
+            println("hello")  // 1
+            launch {
+                println("world") // 2
+                launch {
+                    println("how are you") // 3
+                }
+            }
+        }
+        runBlocking {
+            println("hello2~~~~~~~~") // 4
+            launch {
+                println("hello2~~~222222") // 5ㅎ
+            }
+        }
+        myCoroutineScope.launch {
+            println("hello3~~~~~~~~") // 6 이건 순서보장안되지 ㅎㅎ
+        }
+        println("done") // 5
+    }
 }
