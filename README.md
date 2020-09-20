@@ -1,6 +1,10 @@
 # kotlin_android_unit_test
 
 
+코루틴빌더 스코프 등 블로그  
+https://12bme.tistory.com/582  
+
+
 코루틴 테스트 공식문서 (runblocking 와 runblockingTest의 차이점)
 https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-test/
 
